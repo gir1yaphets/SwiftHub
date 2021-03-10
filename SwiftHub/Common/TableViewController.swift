@@ -60,26 +60,25 @@ class TableViewController: ViewController, UIScrollViewDelegate {
 
         tableView.footRefreshControl.autoRefreshOnFoot = true
 
-        let updateEmptyDataSet = Observable.of(isLoading.mapToVoid().asObservable(), emptyDataSetImageTintColor.mapToVoid(), languageChanged.asObservable()).merge()
-        updateEmptyDataSet.subscribe(onNext: { [weak self] () in
-            self?.tableView.reloadEmptyDataSet()
-        }).disposed(by: rx.disposeBag)
-
         error.subscribe(onNext: { [weak self] (error) in
-            var title = ""
-            var description = ""
-            let image = R.image.icon_toast_warning()
-            switch error {
-            case .serverError(let response):
-                title = response.message ?? ""
-                description = response.detail()
-            }
-            self?.tableView.makeToast(description, title: title, image: image)
+            self?.tableView.makeToast(error.description, title: error.title, image: R.image.icon_toast_warning())
         }).disposed(by: rx.disposeBag)
     }
 
     override func updateUI() {
         super.updateUI()
+    }
+
+    override func bindViewModel() {
+        super.bindViewModel()
+
+        viewModel?.headerLoading.asObservable().bind(to: isHeaderLoading).disposed(by: rx.disposeBag)
+        viewModel?.footerLoading.asObservable().bind(to: isFooterLoading).disposed(by: rx.disposeBag)
+
+        let updateEmptyDataSet = Observable.of(isLoading.mapToVoid().asObservable(), emptyDataSetImageTintColor.mapToVoid(), languageChanged.asObservable()).merge()
+        updateEmptyDataSet.subscribe(onNext: { [weak self] () in
+            self?.tableView.reloadEmptyDataSet()
+        }).disposed(by: rx.disposeBag)
     }
 }
 
@@ -97,10 +96,10 @@ extension TableViewController {
 extension TableViewController: UITableViewDelegate {
 
     func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
-        if let view = view as? UITableViewHeaderFooterView {
-            view.textLabel?.font = UIFont(name: ".SFUIText-Bold", size: 15.0)!
+        if let view = view as? UITableViewHeaderFooterView, let textLabel = view.textLabel {
+            textLabel.font = UIFont.systemFont(ofSize: 15)
             themeService.rx
-                .bind({ $0.text }, to: view.textLabel!.rx.textColor)
+                .bind({ $0.text }, to: textLabel.rx.textColor)
                 .bind({ $0.primaryDark }, to: view.contentView.rx.backgroundColor)
                 .disposed(by: rx.disposeBag)
         }

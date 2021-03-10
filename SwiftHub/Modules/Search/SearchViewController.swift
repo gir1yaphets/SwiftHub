@@ -310,11 +310,6 @@ class SearchViewController: TableViewController {
                                           selection: tableView.rx.modelSelected(SearchSectionItem.self).asDriver())
         let output = viewModel.transform(input: input)
 
-        viewModel.loading.asObservable().bind(to: isLoading).disposed(by: rx.disposeBag)
-        viewModel.headerLoading.asObservable().bind(to: isHeaderLoading).disposed(by: rx.disposeBag)
-        viewModel.footerLoading.asObservable().bind(to: isFooterLoading).disposed(by: rx.disposeBag)
-        viewModel.parsedError.asObservable().bind(to: error).disposed(by: rx.disposeBag)
-
         let dataSource = RxTableViewSectionedReloadDataSource<SearchSection>(configureCell: { dataSource, tableView, indexPath, item in
             switch item {
             case .trendingRepositoriesItem(let cellViewModel):
@@ -379,7 +374,7 @@ class SearchViewController: TableViewController {
 
         viewModel.searchMode.asDriver().drive(onNext: { [weak self] (searchMode) in
             guard let self = self else { return }
-            self.searchModeSegmentedControl.selectedSegmentIndex = searchMode.rawValue
+            self.searchModeSegmentedControl.selectedSegmentIndex = UInt(searchMode.rawValue)
 
             switch searchMode {
             case .trending:

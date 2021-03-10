@@ -54,11 +54,12 @@
 </p>
 
 ## App Features
-- [x] Basic and OAuth2 authentication
+- [x] Basic, Personal Access Token and OAuth2 authentication
 - [x] View trending repositories and users ([github-trending-api](https://github.com/huchenme/github-trending-api))
 - [x] Advanced searching and sorting repositories and users, filter by language
 - [x] View repository and user details, events, issues, commits, pull requests, contributors, etc...
 - [x] View issue and pull request messages ([MessageKit](https://github.com/MessageKit/MessageKit))
+- [x] Tool for counting lines of code from github repositories ([codetabs](https://github.com/jolav/codetabs)) ([Charts](https://github.com/danielgindi/Charts))
 - [x] The missing star history graph of github repos ([stars-history](https://github.com/timqian/star-history))
 - [x] Quickly browse the history of a file from any git repository ([git-history](https://github.com/pomber/git-history))
 - [x] Tool for visualizing GitHub profiles ([profile-summary-for-github](https://github.com/tipsy/profile-summary-for-github))
@@ -113,9 +114,16 @@ Install [`Bundler`](https://bundler.io) for managing Ruby gem dependencies
 [sudo] gem install bundler
 ```
 
-Install [Brew](https://github.com/Homebrew/brew) package manager for macOS
+Install [Brew](https://github.com/Homebrew/brew) package manager for macOS:
+
+For MacOS Catalina, macOS Mojave, and MacOS Big Sur:
 ```sh
 /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+```
+
+For macOS High Sierra, Sierra, El Capitan, and earlier:
+```sh
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
 ```
 
 Install [`Node`](https://nodejs.org/en/) (required to install [Apollo](https://github.com/apollographql/apollo-ios))
@@ -160,6 +168,7 @@ Thanks to them for the beautiful open source icons.
 * [github-trending-api](https://github.com/huchenme/github-trending-api#projects-using-github-trending-api) - Projects using this library
 * [awesome-rxswift](https://github.com/LeoMobileDeveloper/awesome-rxswift#open-source-apps) - Curated list of RxSwift library and learning material
 * [Medium-Mybridge](https://medium.mybridge.co/swift-open-source-for-the-past-month-v-may-2019-c0f6a0d61e34) - Swift Open Source for the Past Month (v.May 2019)
+* [alternativeto](https://alternativeto.net/software/swifthub/) - Crowdsourced software recommendations
 
 ## References
 * [CleanArchitectureRxSwift](https://github.com/sergdort/CleanArchitectureRxSwift) - Clean architecture with RxSwift

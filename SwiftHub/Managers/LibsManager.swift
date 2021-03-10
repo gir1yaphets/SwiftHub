@@ -13,9 +13,10 @@ import SnapKit
 import IQKeyboardManagerSwift
 import CocoaLumberjack
 import Kingfisher
+#if DEBUG
 import FLEX
-import Fabric
-import Crashlytics
+#endif
+import FirebaseCrashlytics
 import NVActivityIndicatorView
 import NSObject_Rx
 import RxViewController
@@ -25,7 +26,6 @@ import SwifterSwift
 import SwiftDate
 import Hero
 import KafkaRefresh
-import Umbrella
 import Mixpanel
 import Firebase
 import DropDown
@@ -41,16 +41,16 @@ class LibsManager: NSObject {
 
     let bannersEnabled = BehaviorRelay(value: UserDefaults.standard.bool(forKey: Configs.UserDefaultsKeys.bannersEnabled))
 
-    override init() {
+    private override init() {
         super.init()
 
         if UserDefaults.standard.object(forKey: Configs.UserDefaultsKeys.bannersEnabled) == nil {
             bannersEnabled.accept(true)
         }
 
-        bannersEnabled.subscribe(onNext: { (enabled) in
+        bannersEnabled.skip(1).subscribe(onNext: { (enabled) in
             UserDefaults.standard.set(enabled, forKey: Configs.UserDefaultsKeys.bannersEnabled)
-            analytics.updateUser(ads: enabled)
+            analytics.set(.adsEnabled(value: enabled))
         }).disposed(by: rx.disposeBag)
     }
 
@@ -110,7 +110,7 @@ class LibsManager: NSObject {
     }
 
     func setupKeyboardManager() {
-        IQKeyboardManager.shared.enable = false
+        IQKeyboardManager.shared.enable = true
     }
 
     func setupKingfisher() {
@@ -126,7 +126,6 @@ class LibsManager: NSObject {
 
     func setupCocoaLumberjack() {
         DDLog.add(DDOSLogger.sharedInstance)
-
         let fileLogger: DDFileLogger = DDFileLogger() // File Logger
         fileLogger.rollingFrequency = TimeInterval(60*60*24)  // 24 hours
         fileLogger.logFileManager.maximumNumberOfLogFiles = 7
@@ -134,16 +133,15 @@ class LibsManager: NSObject {
     }
 
     func setupFLEX() {
-        FLEXManager.shared().isNetworkDebuggingEnabled = true
+        #if DEBUG
+        FLEXManager.shared.isNetworkDebuggingEnabled = true
+        #endif
     }
 
     func setupAnalytics() {
         FirebaseApp.configure()
-        Mixpanel.sharedInstance(withToken: Keys.mixpanel.apiKey)
-        Fabric.with([Crashlytics.self])
-        Fabric.sharedSDK().debug = false
-        analytics.register(provider: MixpanelProvider())
-        analytics.register(provider: FirebaseProvider())
+        Mixpanel.initialize(token: Keys.mixpanel.apiKey)
+        FirebaseConfiguration.shared.setLoggerLevel(.min)
     }
 
     func setupAds() {
@@ -154,8 +152,10 @@ class LibsManager: NSObject {
 extension LibsManager {
 
     func showFlex() {
-        FLEXManager.shared().showExplorer()
+        #if DEBUG
+        FLEXManager.shared.showExplorer()
         analytics.log(.flexOpened)
+        #endif
     }
 
     func removeKingfisherCache() -> Observable<Void> {

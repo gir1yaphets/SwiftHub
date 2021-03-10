@@ -27,7 +27,7 @@ class TableViewCell: UITableViewCell {
         view.cornerRadius = Configs.BaseDimensions.cornerRadius
         self.addSubview(view)
         view.snp.makeConstraints({ (make) in
-            make.edges.equalToSuperview().inset(UIEdgeInsets(horizontal: self.inset*2, vertical: self.inset))
+            make.edges.equalToSuperview().inset(UIEdgeInsets(horizontal: self.inset, vertical: self.inset/2))
         })
         return view
     }()
@@ -39,7 +39,7 @@ class TableViewCell: UITableViewCell {
         view.alignment = .center
         self.containerView.addSubview(view)
         view.snp.makeConstraints({ (make) in
-            make.edges.equalToSuperview().inset(inset)
+            make.edges.equalToSuperview().inset(inset/2)
         })
         return view
     }()
@@ -70,6 +70,10 @@ class TableViewCell: UITableViewCell {
 
     func updateUI() {
         setNeedsDisplay()
+    }
+
+    func bind(to viewModel: TableViewCellViewModel) {
+
     }
 }
 
